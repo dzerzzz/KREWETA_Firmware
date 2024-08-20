@@ -1,0 +1,149 @@
+---
+- name: Setup Kreweta CM4
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Remove /etc/profile.d/sshpwd.sh
+      ansible.builtin.file:
+        path: "/etc/profile.d/sshpwd.sh"
+        state: "absent"
+        
+    - name: Remove motd
+      ansible.builtin.file:
+        path: "/etc/motd"
+        state: "absent"
+
+    - name: Enable Camera_0 
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtoverlay=ov5647,cam0"
+          
+    - name: Enable Camera_1
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtoverlay=ov5647,cam1"
+
+    - name: Enable SPI
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtparam=spi=on"
+    
+    - name: Enable I2C_1
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtparam=i2c1=on"
+
+    - name: Enable I2C_10
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtparam=i2c_arm=on"
+          
+    - name: Enable hardware PWM on GPIO12 (Grove near USB)
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtoverlay=pwm,pin=12,func=4"
+
+    - name: Enable RTC
+      lineinfile:
+          path: /boot/config.txt
+          line: "dtoverlay=i2c-rtc,rv3028,backup-switchover-mode=1,i2c_csi_dsi"
+    
+    - name: Install packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - i2c-tools
+        - git
+        - python3
+        - python3-pip
+        
+    - name: Install picamera2 python package 
+      ansible.builtin.pip:
+        name: picamera2
+
+    - name: Creates directory for camera0 recordings
+      file:
+        path: /home/pi/camera0
+        state: directory
+        owner: pi
+        group: pi
+        mode: 0755 
+        
+    - name: Creates directory for camera1 recordings
+      file:
+        path: /home/pi/camera1
+        state: directory   
+        owner: pi
+        group: pi
+        mode: 0755 
+    
+    - name: Copy sensors folders
+      copy:
+        remote_src: True
+        src: /home/pi/setup/sensors
+        dest: /home/pi
+        owner: pi
+        group: pi
+        mode: 0755 
+    
+    - name: Compile iis_recorder
+      command: /bin/gcc -o /home/pi/sensors/iis_recorder /home/pi/sensors/iis_recorder.c /home/pi/sensors/iis3dwb_reg.c -lm
+      
+    - name: Create service for sensors
+      copy:
+        content: |
+          [Unit]
+          Description=Sensors recording service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=5s
+          WorkingDirectory=/home/pi/sensors
+          ExecStart=/home/pi/sensors/iis_recorder
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/sensors.service
+        
+    - name: Create service for camera0
+      copy:
+        content: |
+          [Unit]
+          Description=Camera_0 recording service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=1s
+          WorkingDirectory=/home/pi/camera0
+          ExecStart=/bin/python3 /home/pi/setup/cameras.py 0
+          
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/camera0.service
+        
+    - name: Create service for camera1
+      copy:
+        content: |
+          [Unit]
+          Description=Camera_1 recording service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=1s
+          WorkingDirectory=/home/pi/camera1
+          ExecStart=/bin/python3 /home/pi/setup/cameras.py 1
+          
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/camera1.service
+    
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes

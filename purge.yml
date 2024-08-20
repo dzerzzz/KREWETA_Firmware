@@ -1,0 +1,42 @@
+---
+- name: Purge old data
+  hosts: localhost
+  gather_facts: no
+  become: true
+  tasks:
+  
+    - name: Find camera0 data files
+      ansible.builtin.find:
+        paths: /home/pi/camera0
+        patterns: 'rec-*.h264'
+      register: rm_camera0
+      
+    - name: Find camera1 data files
+      ansible.builtin.find:
+        paths: /home/pi/camera1
+        patterns: 'rec-*.h264'
+      register: rm_camera1
+      
+    - name: Find sensors data files
+      ansible.builtin.find:
+        paths: /home/pi/sensors
+        patterns: 'IIS*.bin'
+      register: rm_sensors
+
+    - name: Remove camera0 data files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ rm_camera0.files }}"
+      
+    - name: Remove camera1 data files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ rm_camera1.files }}"
+
+    - name: Remove sensors data files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ rm_sensors.files }}"
