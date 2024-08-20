@@ -59,7 +59,7 @@
         - python3-pip
         
     - name: Install picamera2 python package 
-      command: pip install picamera2 --break-system-packages
+      command: sudo apt install -y python3-picamera2
 
     - name: Creates directory for camera0 recordings
       file:
