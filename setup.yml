@@ -15,37 +15,37 @@
 
     - name: Enable Camera_0 
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtoverlay=ov5647,cam0"
           
     - name: Enable Camera_1
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtoverlay=ov5647,cam1"
 
     - name: Enable SPI
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtparam=spi=on"
     
     - name: Enable I2C_1
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtparam=i2c1=on"
 
     - name: Enable I2C_10
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtparam=i2c_arm=on"
           
     - name: Enable hardware PWM on GPIO12 (Grove near USB)
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtoverlay=pwm,pin=12,func=4"
 
     - name: Enable RTC
       lineinfile:
-          path: /boot/config.txt
+          path: /boot/firmware/config.txt
           line: "dtoverlay=i2c-rtc,rv3028,backup-switchover-mode=1,i2c_csi_dsi"
     
     - name: Install packages
@@ -59,8 +59,7 @@
         - python3-pip
         
     - name: Install picamera2 python package 
-      ansible.builtin.pip:
-        name: picamera2
+      command: pip install picamera2 --break-system-packages
 
     - name: Creates directory for camera0 recordings
       file:

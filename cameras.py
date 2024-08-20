@@ -64,7 +64,7 @@ cam.configure(cam.create_video_configuration(video_config))
 cam.encoder = H264Encoder(4000000, repeat=True)
 
 cam.encoder.output = SplitOutput(session_id)
-cam.start_encoder()
+cam.start_encoder(cam.encoder)
 cam.start()
 while 1:
     if not cam.encoder.output.running():

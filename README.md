@@ -4,12 +4,13 @@ Instrukcja pierwszego setupu:
 
     sudo apt-get update
     sudo apt-get install ansible git -y
-    git clone https://github.com/sq3tle/cm4_camera_setup setup
+    git clone https://github.com/dzerzzz/KREWETA_Firmware setup
     ansible-playbook setup/setup.yml
     
 Po zakończeniu playbooka zrestartuj raspberry pi:
 
     sudo reboot now
+
 Po ponownym połączeniu, zsynchronizuj pierwszy raz zegar rtc:
 
      ansible-playbook setup/sync_rtc.yml
@@ -45,3 +46,6 @@ Płytka jest gotowa do pracy. Oto najważniejsze komendy
  - [ ] Wyłączasz raspberry pi używając ***sudo shutdown now***
 
 Potem na spokojnie poszukaj nagrań lotu w folderach camera0, camera1, sensors. Jeśli wszystko poszło dobrze wystarczy kierować się czasem stworzenia pliku. 
+
+## Komnata chwały
+Pierwotna wersja firmware należy do https://github.com/sq3tle/cm4_camera_setup
