@@ -1,0 +1,8 @@
+---
+- name: Set target temperature in the box
+  hosts: localhost
+  gather_facts: no
+  become: true
+  tasks:
+    - name: set target temperature in the box
+      command: /home/pi/sensors/set_temp {{temperature}}
