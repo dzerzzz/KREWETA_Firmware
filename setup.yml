@@ -37,7 +37,17 @@
       lineinfile:
           path: /boot/firmware/config.txt
           line: "dtparam=i2c_arm=on"
-          
+
+    - name: Enable UART
+      lineinfile:
+          path: /boot/firmware/config.txt
+          line: "enable_uart=1"
+
+    - name: Enable gadget mode
+      lineinfile:
+          path: /boot/firmware/config.txt
+          line: "dtoverlay=dwc2"
+
     - name: Enable hardware PWM on GPIO12 (Grove near USB)
       lineinfile:
           path: /boot/firmware/config.txt
@@ -54,6 +64,7 @@
         state: present
       loop:
         - i2c-tools
+        - vim
         - git
         - python3
         - python3-pip
@@ -84,11 +95,37 @@
         dest: /home/pi
         owner: pi
         group: pi
+        mode: 0755
+
+    - name: Copy directory for temperature recordings and control
+      copy:
+        remote_src: True
+        src: /home/pi/setup/temperature
+        dest: /home/pi
+        owner: pi
+        group: pi
         mode: 0755 
+
+    - name: Create for fifo path
+      file:
+        path: /tmp/uart_fifo
+        state: directory
+        owner: pi
+        group: pi
+        mode: 0755
     
     - name: Compile iis_recorder
       command: /bin/gcc -o /home/pi/sensors/iis_recorder /home/pi/sensors/iis_recorder.c /home/pi/sensors/iis3dwb_reg.c -lm
       
+    - name: Compile UART
+      command: /bin/gcc -o /home/pi/temperature/uart /home/pi/temperature/iface.c /home/pi/temperature/uart.c -lm
+
+    - name: Compile temperature recording and transmitting to STM32
+      command: /bin/gcc -o /home/pi/temperature/temp /home/pi/temperature/iface.c /home/pi/temperature/temp.c -lm
+
+    - name: Compile setting temperature
+      command: /bin/gcc -o /home/pi/temperature/set_temp /home/pi/temperature/iface.c /home/pi/temperature/set_temp.c -lm
+
     - name: Create service for sensors
       copy:
         content: |
@@ -142,7 +179,43 @@
           [Install]
           WantedBy=multi-user.target
         dest: /etc/systemd/system/camera1.service
-    
+
+    - name: Create service for UART
+      copy:
+        content: |
+          [Unit]
+          Description=Transmitting service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=5s
+          WorkingDirectory=/home/pi/temperature
+          ExecStart=/home/pi/temperature/uart
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/uart.service
+
+    - name: Create service for temperature
+      copy:
+        content: |
+          [Unit]
+          Description=Temperature recording service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=5s
+          WorkingDirectory=/home/pi/temperature
+          ExecStart=/home/pi/temperature/temp
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/temp.service
+
     - name: Reload systemd
       systemd:
         daemon_reload: yes
