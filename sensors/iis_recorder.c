@@ -36,7 +36,7 @@ static iis3dwb_fifo_out_raw_t fifo_data[FIFO_WATERMARK];
 static int16_t *datax;
 static int16_t *datay;
 static int16_t *dataz;
-static int32_t *ts;
+static int64_t *ts;
 
 /* Extern variables ----------------------------------------------------------*/
 
@@ -150,8 +150,7 @@ void main(void)
         datax = (int16_t *)&f_data->data[0];
         datay = (int16_t *)&f_data->data[2];
         dataz = (int16_t *)&f_data->data[4];
-        ts = (int32_t *)&f_data->data[0];
-        
+        time_t ts = time(NULL);
         
         switch (f_data->tag >> 3) {
         case IIS3DWB_XL_TAG:
@@ -163,13 +162,13 @@ void main(void)
           // tx_com(tx_buffer, strlen((char const *)tx_buffer));
 
           fwrite(&id_vib, sizeof(int16_t), 1, file);
-          fwrite(&datax, sizeof(int16_t), 1, file);
-          fwrite(&datay, sizeof(int16_t), 1, file);
-          fwrite(&dataz, sizeof(int16_t), 1, file);
+          fwrite(datax, sizeof(int16_t), 1, file);
+          fwrite(datay, sizeof(int16_t), 1, file);
+          fwrite(dataz, sizeof(int16_t), 1, file);
           break;
         case IIS3DWB_TIMESTAMP_TAG:
           fwrite(&id_time, sizeof(int16_t), 1, file);
-          fwrite(&ts, sizeof(int32_t), 1, file);   
+          fwrite(&ts, sizeof(int64_t), 1, file);
           break;
         default:
           break;
