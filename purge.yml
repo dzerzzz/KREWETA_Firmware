@@ -23,6 +23,12 @@
         patterns: 'IIS*.bin'
       register: rm_sensors
 
+    - name: Find temperature data files
+      ansible.builtin.find:
+        paths: /home/pi/sensors
+        patterns: 'TMP*.txt'
+      register: rm_temperature
+
     - name: Remove camera0 data files
       ansible.builtin.file:
         path: "{{ item.path }}"
@@ -40,3 +46,9 @@
         path: "{{ item.path }}"
         state: absent
       with_items: "{{ rm_sensors.files }}"
+
+    - name: Remove temperature data files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ rm_temperature.files }}"
