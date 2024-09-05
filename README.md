@@ -13,16 +13,22 @@ Po zakończeniu playbooka zrestartuj raspberry pi:
 
 Po ponownym połączeniu, zsynchronizuj pierwszy raz zegar rtc:
 
-     ansible-playbook setup/sync_rtc.yml
+    ansible-playbook setup/sync_rtc.yml
 
-Płytka jest gotowa do pracy. Oto najważniejsze komendy
+Możesz także sprawdzić działanie kamary:
+    
+    libcamera-jpeg -o image.jpeg
+
+Płytka jest gotowa do pracy.
+
+## Najważniejsze komendy:
 | Polecenie | Opis |
 |--|--|
 | ansible-playbook setup/enable.yml | Uzbraja i uruchamia rejestrację danych, nawet po resecie zasilania |
 | ansible-playbook setup/disable.yml | Wyłącza rejestrację danych, nawet po resecie zasilania  |
 | ansible-playbook setup/sync_rtc.yml | Synchronizuje zegar RTC z obecnego czasu systemowego   |
 | ansible-playbook setup/purge.yml | Usuwa dotychczasowe dane  |
-| ansible-playbook setup/set_temp.yml --extra-vars temperature=<target-temp>| Ustawia docelową temperaturę w pudełku |
+| ansible-playbook setup/set_temp.yml --extra-vars temperature=***target-temp***| Ustawia docelową temperaturę w pudełku |
 | journalctl -u camera0.service -b | Logi Kamery 0 od ostatniego boota  |
 | journalctl -u camera1.service -b | Logi Kamery 1 od ostatniego boota  |
 
