@@ -28,8 +28,9 @@ Jeśli nie pojawiły się żadne błędy, płytka jest gotowa do pracy.
 | ansible-playbook setup/disable.yml | Wyłącza rejestrację danych, nawet po resecie zasilania |
 | ansible-playbook setup/sync_rtc.yml | Synchronizuje zegar RTC z obecnego czasu systemowego |
 | ansible-playbook setup/purge.yml | Usuwa dotychczasowe dane |
-<!-- | ansible-playbook setup/set_temp.yml --extra-vars temperature=***target-temp***| Ustawia docelową temperaturę w pudełku | -->
-| journalctl -u camera.service -b | Logi Kamery 0 od ostatniego boota |
+| ansible-playbook setup/set_temp.yml --extra-vars temperature=***target-temp***| Ustawia docelową temperaturę w pudełku |
+| journalctl -u camera0.service -b | Logi Kamery 0 od ostatniego boota  |
+| journalctl -u camera1.service -b | Logi Kamery 1 od ostatniego boota  |
 
 ## Checklista przed lotem
 
