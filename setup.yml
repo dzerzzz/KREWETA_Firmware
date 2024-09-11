@@ -97,14 +97,14 @@
         group: pi
         mode: 0755
 
-    - name: Copy directory for temperature recordings and control
-      copy:
-        remote_src: True
-        src: /home/pi/setup/temperature
-        dest: /home/pi
-        owner: pi
-        group: pi
-        mode: 0755 
+    # - name: Copy directory for temperature recordings and control
+    #   copy:
+    #     remote_src: True
+    #     src: /home/pi/setup/temperature
+    #     dest: /home/pi
+    #     owner: pi
+    #     group: pi
+    #     mode: 0755 
 
     - name: Create for fifo path
       file:
@@ -114,17 +114,17 @@
         group: pi
         mode: 0755
     
-    - name: Compile iis_recorder
-      command: /bin/gcc -o /home/pi/sensors/iis_recorder /home/pi/sensors/iis_recorder.c /home/pi/sensors/iis3dwb_reg.c -lm
+    # - name: Compile iis_recorder
+    #   command: /bin/gcc -o /home/pi/sensors/iis_recorder /home/pi/sensors/iis_recorder.c /home/pi/sensors/iis3dwb_reg.c -lm
       
-    - name: Compile UART
-      command: /bin/gcc -o /home/pi/temperature/uart /home/pi/temperature/iface.c /home/pi/temperature/uart.c -lm
+    # - name: Compile UART
+    #   command: /bin/gcc -o /home/pi/temperature/uart /home/pi/temperature/iface.c /home/pi/temperature/uart.c -lm
 
-    - name: Compile temperature recording and transmitting to STM32
-      command: /bin/gcc -o /home/pi/temperature/temp /home/pi/temperature/iface.c /home/pi/temperature/temp.c -lm
+    # - name: Compile temperature recording and transmitting to STM32
+    #   command: /bin/gcc -o /home/pi/temperature/temp /home/pi/temperature/iface.c /home/pi/temperature/temp.c -lm
 
-    - name: Compile setting temperature
-      command: /bin/gcc -o /home/pi/temperature/set_temp /home/pi/temperature/iface.c /home/pi/temperature/set_temp.c -lm
+    # - name: Compile setting temperature
+    #   command: /bin/gcc -o /home/pi/temperature/set_temp /home/pi/temperature/iface.c /home/pi/temperature/set_temp.c -lm
 
     - name: Create service for sensors
       copy:
