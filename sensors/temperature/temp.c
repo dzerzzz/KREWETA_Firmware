@@ -62,6 +62,8 @@ int main() {
     
     fifo_fd = open(fifo_path, O_WRONLY);
     uint8_t frame_buffer[FRAME_SIZE];
+
+	// FRAME [COMMAND, SENSOR_READING]
     frame out;
     out.command = SENSOR_READING;
 
@@ -95,8 +97,9 @@ int main() {
             }
             float cTemp = temp * 0.0625;
 
-            // printf("Temperature in Celsius is: %.2f C\n", cTemp);
-            fprintf(outputFile, "%ld %.2f\n", current_time, cTemp);
+            // printf("Temperature in Celsius is: %.2f °C\n", cTemp);
+
+			fprintf(outputFile, "%ld %.2f\n", current_time, cTemp);
 
 			// Send to UART handler
             out.value = cTemp;
