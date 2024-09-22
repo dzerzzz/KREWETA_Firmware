@@ -80,15 +80,15 @@
         group: pi
         mode: 0755 
         
-    - name: Creates directory for camera1 recordings
-      file:
-        path: /home/pi/camera1
-        state: directory   
-        owner: pi
-        group: pi
-        mode: 0755 
+    # - name: Creates directory for camera1 recordings
+    #   file:
+    #     path: /home/pi/camera1
+    #     state: directory   
+    #     owner: pi
+    #     group: pi
+    #     mode: 0755 
     
-    - name: Copy sensors folders
+    - name: Copy sensors folder
       copy:
         remote_src: True
         src: /home/pi/setup/sensors
@@ -126,24 +126,78 @@
     # - name: Compile setting temperature
     #   command: /bin/gcc -o /home/pi/temperature/set_temp /home/pi/temperature/iface.c /home/pi/temperature/set_temp.c -lm
 
-    - name: Create service for sensors
+    - name: Create service for iis3d
       copy:
         content: |
           [Unit]
-          Description=Sensors recording service
+          Description=IIS3D recording service
           After=multi-user.target
 
           [Service]
           User=pi
           Restart=on-failure
           RestartSec=5s
-          WorkingDirectory=/home/pi/sensors
-          ExecStart=/home/pi/sensors/iis_recorder
+          WorkingDirectory=/home/pi/sensors/iis3d
+          ExecStart=/home/pi/sensors/iis3d/iis_recorder
 
           [Install]
           WantedBy=multi-user.target
-        dest: /etc/systemd/system/sensors.service
-        
+        dest: /etc/systemd/system/iis3d.service
+
+    - name: Create service for scd30
+      copy:
+        content: |
+          [Unit]
+          Description=SCD30 recording service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=5s
+          WorkingDirectory=/home/pi/sensors/scd30
+          ExecStart=/home/pi/sensors/scd30/scd30
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/scd30.service
+
+    - name: Create service for UART
+      copy:
+        content: |
+          [Unit]
+          Description=Transmitting service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=5s
+          WorkingDirectory=/home/pi/sensors/temperature
+          ExecStart=/home/pi/sensors/temperature/uart
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/uart.service
+
+    - name: Create service for temperature
+      copy:
+        content: |
+          [Unit]
+          Description=Temperature recording service
+          After=multi-user.target
+
+          [Service]
+          User=pi
+          Restart=on-failure
+          RestartSec=5s
+          WorkingDirectory=/home/pi/sensors/temperature
+          ExecStart=/home/pi/sensors/temperature/temp
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/temp.service
+
     - name: Create service for camera0
       copy:
         content: |
@@ -162,59 +216,23 @@
           WantedBy=multi-user.target
         dest: /etc/systemd/system/camera0.service
         
-    - name: Create service for camera1
-      copy:
-        content: |
-          [Unit]
-          Description=Camera_1 recording service
-          After=multi-user.target
+    # - name: Create service for camera1
+    #   copy:
+    #     content: |
+    #       [Unit]
+    #       Description=Camera_1 recording service
+    #       After=multi-user.target
 
-          [Service]
-          User=pi
-          Restart=on-failure
-          RestartSec=1s
-          WorkingDirectory=/home/pi/camera1
-          ExecStart=/bin/python3 /home/pi/setup/cameras.py 1
+    #       [Service]
+    #       User=pi
+    #       Restart=on-failure
+    #       RestartSec=1s
+    #       WorkingDirectory=/home/pi/camera1
+    #       ExecStart=/bin/python3 /home/pi/setup/cameras.py 1
           
-          [Install]
-          WantedBy=multi-user.target
-        dest: /etc/systemd/system/camera1.service
-
-    - name: Create service for UART
-      copy:
-        content: |
-          [Unit]
-          Description=Transmitting service
-          After=multi-user.target
-
-          [Service]
-          User=pi
-          Restart=on-failure
-          RestartSec=5s
-          WorkingDirectory=/home/pi/temperature
-          ExecStart=/home/pi/temperature/uart
-
-          [Install]
-          WantedBy=multi-user.target
-        dest: /etc/systemd/system/uart.service
-
-    - name: Create service for temperature
-      copy:
-        content: |
-          [Unit]
-          Description=Temperature recording service
-          After=multi-user.target
-
-          [Service]
-          User=pi
-          Restart=on-failure
-          RestartSec=5s
-          WorkingDirectory=/home/pi/temperature
-          ExecStart=/home/pi/temperature/temp
-
-          [Install]
-          WantedBy=multi-user.target
-        dest: /etc/systemd/system/temp.service
+    #       [Install]
+    #       WantedBy=multi-user.target
+    #     dest: /etc/systemd/system/camera1.service
 
     - name: Reload systemd
       systemd:

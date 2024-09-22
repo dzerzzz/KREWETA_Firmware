@@ -17,8 +17,26 @@
         state: stopped
         enabled: false
         
-    - name: Disable and stop sensors service
+    - name: Disable and stop iis3d service
       service:
-        name: sensors
+        name: iis3d
+        state: stopped
+        enabled: false
+
+    - name: Disable and stop scd30 service
+      service:
+        name: scd30
+        state: stopped
+        enabled: false
+
+    - name: Disable and stop uart service
+      service:
+        name: uart
+        state: stopped
+        enabled: false
+
+    - name: Disable and stop temp service
+      service:
+        name: temp
         state: stopped
         enabled: false

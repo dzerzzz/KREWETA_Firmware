@@ -17,8 +17,26 @@
         state: started
         enabled: yes
 
-    - name: Enable and start sensors service
+    - name: Enable and start iis3d service
       service:
-        name: sensors
+        name: iis3d
+        state: started
+        enabled: yes
+
+    - name: Enable and start scd30 service
+      service:
+        name: scd30
+        state: started
+        enabled: yes
+
+    - name: Enable and start uart service
+      service:
+        name: uart
+        state: started
+        enabled: yes
+
+    - name: Enable and start temp service
+      service:
+        name: temp
         state: started
         enabled: yes
