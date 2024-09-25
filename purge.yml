@@ -17,17 +17,23 @@
         patterns: 'rec-*.h264'
       register: rm_camera1
       
-    - name: Find sensors data files
+    - name: Find iis3d data files
       ansible.builtin.find:
-        paths: /home/pi/sensors
+        paths: /home/pi/sensors/iis3d
         patterns: 'IIS*.bin'
-      register: rm_sensors
+      register: rm_iis3d
 
     - name: Find temperature data files
       ansible.builtin.find:
-        paths: /home/pi/sensors
+        paths: /home/pi/sensors/temperature
         patterns: 'TMP*.txt'
       register: rm_temperature
+
+    - name: Find scd30 data files
+      ansible.builtin.find:
+        paths: /home/pi/sensors/scd30
+        patterns: 'SCD*.txt'
+      register: rm_scd30
 
     - name: Remove camera0 data files
       ansible.builtin.file:
@@ -41,14 +47,20 @@
         state: absent
       with_items: "{{ rm_camera1.files }}"
 
-    - name: Remove sensors data files
+    - name: Remove iis3d data files
       ansible.builtin.file:
         path: "{{ item.path }}"
         state: absent
-      with_items: "{{ rm_sensors.files }}"
+      with_items: "{{ rm_iis3d.files }}"
 
     - name: Remove temperature data files
       ansible.builtin.file:
         path: "{{ item.path }}"
         state: absent
       with_items: "{{ rm_temperature.files }}"
+
+    - name: Remove scd30 data files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ rm_scd30.files }}"

@@ -11,11 +11,11 @@
         state: stopped
         enabled: false
         
-    - name: Disable and stop camera1 service
-      service:
-        name: camera1
-        state: stopped
-        enabled: false
+    # - name: Disable and stop camera1 service
+    #   service:
+    #     name: camera1
+    #     state: stopped
+    #     enabled: false
         
     - name: Disable and stop iis3d service
       service:

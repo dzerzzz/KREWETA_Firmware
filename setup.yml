@@ -97,15 +97,6 @@
         group: pi
         mode: 0755
 
-    # - name: Copy directory for temperature recordings and control
-    #   copy:
-    #     remote_src: True
-    #     src: /home/pi/setup/temperature
-    #     dest: /home/pi
-    #     owner: pi
-    #     group: pi
-    #     mode: 0755 
-
     - name: Create for fifo path
       file:
         path: /tmp/uart_fifo

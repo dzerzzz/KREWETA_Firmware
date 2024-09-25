@@ -11,11 +11,11 @@
         state: started
         enabled: yes
         
-    - name: Enable and start camera1 service
-      service:
-        name: camera1
-        state: started
-        enabled: yes
+    # - name: Enable and start camera1 service
+    #   service:
+    #     name: camera1
+    #     state: started
+    #     enabled: yes
 
     - name: Enable and start iis3d service
       service:
