@@ -5,6 +5,7 @@ Instrukcja pierwszego setupu:
     sudo apt-get update
     sudo apt-get install ansible git -y
     git clone https://github.com/dzerzzz/KREWETA_Firmware setup
+    make -C /home/pi/setup/
     ansible-playbook setup/setup.yml
     
 Po zakończeniu playbooka zrestartuj raspberry pi:
